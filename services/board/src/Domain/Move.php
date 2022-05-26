@@ -13,4 +13,9 @@ final class Move
             throw new InvalidArgumentException();
         }
     }
+
+    public function targetSquare(): Square
+    {
+        return Square::fromString($this->value);
+    }
 }
