@@ -10,7 +10,7 @@ down:
 	@make docker-compose cmd='down -v --remove-orphans'
 
 test:
-	@make docker-compose cmd='run --rm board ./vendor/bin/phpunit -c tests/phpunit.xml --testdox'
+	@make docker-compose cmd='run --rm board ./vendor/bin/phpunit -c tests/phpunit.xml --testdox '
 
 #
 # Dev
