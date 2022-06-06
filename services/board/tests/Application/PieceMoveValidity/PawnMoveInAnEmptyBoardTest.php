@@ -7,7 +7,11 @@ use CliChess\Board\Application\Move\MakeMove;
 use CliChess\Board\Application\Move\MakeMoveHandler;
 use CliChess\Board\Domain\Events;
 use CliChess\Board\Domain\IllegalMove;
-use CliChess\Board\Domain\MoveApplied;
+use CliChess\Board\Domain\MutatedAggregate;
+use CliChess\Board\Domain\Pawn;
+use CliChess\Board\Domain\Position;
+use CliChess\Board\Domain\PositionedPiece;
+use CliChess\Board\Domain\Square;
 use CliChess\Board\Stubber;
 use PHPUnit\Framework\TestCase;
 
@@ -17,92 +21,87 @@ class PawnMoveInAnEmptyBoardTest extends TestCase
 
     public function setUp(): void
     {
-        $repo = new InMemoryBoardRepository(Stubber::boardWith(id: 'board-id', piecePosition: 'e2'));
+        $repo = new InMemoryBoardRepository(
+            Stubber::boardWith(id: 'board-e2', initialPosition: new Position(new PositionedPiece(Square::e2, new Pawn()))),
+            Stubber::boardWith(id: 'board-d2', initialPosition: new Position(new PositionedPiece(Square::d2, new Pawn()))),
+        );
+
         $this->handler = new MakeMoveHandler($repo);
     }
 
-    public function legalMoves(): array
+    public function boardIdsWithLegalMoves(): array
     {
         return [
-            'from e2 to e4' => ['e2', 'e4'],
-            'from e2 to e3' => ['e2', 'e3'],
-            'from d2 to d4' => ['d2', 'd4'],
+            'from e2 to e4' => ['board-e2', 'e2', 'e4'],
+            'from e2 to e3' => ['board-e2', 'e2', 'e3'],
+            'from d2 to d4' => ['board-d2', 'd2', 'd4'],
         ];
     }
 
     /**
      * @test
-     * @dataProvider legalMoves
+     * @dataProvider boardIdsWithLegalMoves
      */
-    public function moveAppliedIsCollectedIfMoveCanBeMade(string $from, string $to): void
+    public function moveAppliedIsCollectedIfMoveCanBeMade(string $boardId, string $from, string $to): void
     {
-        $repo = new InMemoryBoardRepository(Stubber::boardWith(id: 'board-id', piecePosition: $from));
-        $this->handler = new MakeMoveHandler($repo);
+        $command = new MakeMove($boardId, $to);
 
-        $command = new MakeMove('board-id', $to);
         ($this->handler)($command);
 
-        self::assertDomainEvents(
-            new MoveApplied(Stubber::boardWith(id: 'board-id', moves: [$to], piecePosition: $to)),
+        self::assertMutatedAggregate(
+            Stubber::boardWith(
+                id: $boardId,
+                initialPosition: new Position(new PositionedPiece(Square::fromString($from), new Pawn())),
+                moves: [$to],
+            ),
         );
+
     }
 
     /**
      * @test
      */
-    public function moveAppliedMoreThanOnceForConsectiveLegalMoves(): void
+    public function moveAppliedMoreThanOnceForConsecutiveLegalMoves(): void
     {
-        $repo = new InMemoryBoardRepository(Stubber::boardWith(id: 'board-id', piecePosition: 'e2'));
-        $this->handler = new MakeMoveHandler($repo);
-        $command = new MakeMove('board-id', 'e4');
-        ($this->handler)($command);
+        ($this->handler)(new MakeMove('board-e2', 'e4'));
 
-        self::assertDomainEvents(
-            new MoveApplied(Stubber::boardWith(id: 'board-id', moves: ['e4'], piecePosition: 'e4')),
+        ($this->handler)(new MakeMove('board-e2', 'e5'));
+
+        self::assertMutatedAggregate(
+            Stubber::boardWith(
+                id: 'board-e2',
+                initialPosition: new Position(
+                    new PositionedPiece(Square::e2, new Pawn()),
+                ),
+                moves: ['e4', 'e5'],
+            ),
         );
+    }
 
-        $command = new MakeMove('board-id', 'e5');
-        ($this->handler)($command);
-
-        self::assertDomainEvents(
-            new MoveApplied(Stubber::boardWith(id: 'board-id', moves: ['e4', 'e5'], piecePosition: 'e5')),
-        );
+    public function boardIdsWithIllegalMoves(): array
+    {
+        return [
+            'from e2 to e5' => ['board-e2', 'e5'],
+            'from d2 to e3' => ['board-d2', 'e3'],
+            'from d2 to d5' => ['board-d2', 'd5'],
+        ];
     }
 
     /**
      * @test
+     * @dataProvider boardIdsWithIllegalMoves
      */
-    public function moveAppliedMoreThanOnceForConsectiveLegalAndIllegalMoves(): void
+    public function throwExceptionIfMoveIsIllegal(string $boardId, string $to): void
     {
-        $repo = new InMemoryBoardRepository(Stubber::boardWith(id: 'board-id', piecePosition: 'e2'));
-        $this->handler = new MakeMoveHandler($repo);
-        $command = new MakeMove('board-id', 'e4');
-        ($this->handler)($command);
-
-        self::assertDomainEvents(
-            new MoveApplied(Stubber::boardWith(id: 'board-id', moves: ['e4'], piecePosition: 'e4')),
-        );
-
-        $command = new MakeMove('board-id', 'e6');
-        ($this->handler)($command);
-
-        self::expectException(IllegalMove::class);
-    }
-
-    /**
-     * @test
-     */
-    public function throwExceptionIfMoveIsIllegal(): void
-    {
-        $command = new MakeMove('board-id', 'e5');
+        $command = new MakeMove($boardId, $to);
 
         self::expectException(IllegalMove::class);
 
         ($this->handler)($command);
     }
 
-    private static function assertDomainEvents(object ...$expected): void
+    private static function assertMutatedAggregate(object $expected): void
     {
-        self::assertEquals($expected, Events::popAll());
+        self::assertEquals($expected, MutatedAggregate::pop());
     }
 }

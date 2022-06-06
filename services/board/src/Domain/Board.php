@@ -9,7 +9,7 @@ final class Board
 
     public function __construct(
         public readonly BoardId $id,
-        public Pawn $piece,
+        public readonly Position $initialPosition,
         Move ...$moves,
     ) {
         $this->moves = $moves;
@@ -17,15 +17,22 @@ final class Board
 
     public function apply(Move $move): void
     {
-        if (!$this->piece->canMoveTo($move->targetSquare())) {
-            throw new IllegalMove();
-        }
+        $position = $this->replayMoves();
+        $position->withMoveApplied($move);
 
         $this->moves[] = $move;
-        $this->piece = $this->piece->positionedAt($move->targetSquare());
 
-        Events::collect(new MoveApplied($this));
+        MutatedAggregate::add($this);
     }
 
+    private function replayMoves(): Position
+    {
+        $position = $this->initialPosition;
 
+        foreach ($this->moves as $move) {
+            $position = $position->withMoveApplied($move);
+        }
+
+        return $position;
+    }
 }

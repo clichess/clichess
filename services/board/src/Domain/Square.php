@@ -6,6 +6,7 @@ enum Square: string
 {
     case d2 = 'd2';
     case d4 = 'd4';
+    case d5 = 'd5';
 
     case e2 = 'e2';
     case e3 = 'e3';

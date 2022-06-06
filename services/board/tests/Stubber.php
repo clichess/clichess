@@ -6,6 +6,7 @@ use CliChess\Board\Domain\Board;
 use CliChess\Board\Domain\BoardId;
 use CliChess\Board\Domain\Move;
 use CliChess\Board\Domain\Pawn;
+use CliChess\Board\Domain\Position;
 use CliChess\Board\Domain\Square;
 use ReflectionClass;
 
@@ -13,12 +14,12 @@ final class Stubber
 {
     public static function boardWith(
         string $id = null,
-        string $piecePosition = null,
-        array $moves = [],
+        Position $initialPosition = null,
+        array  $moves = [],
     ): Board {
         return self::hydrate(Board::class, [
             'id' => new BoardId($id ?? '666'),
-            'piece' => new Pawn(Square::fromString($piecePosition ?? 'e4')),
+            'initialPosition' => $initialPosition,
             'moves' => array_map(
                 fn (string $m): Move => new Move($m),
                 $moves,
