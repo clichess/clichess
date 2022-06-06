@@ -21,7 +21,10 @@ logs:
 	@make docker-compose cmd='logs -f' $(if ${grep},| grep '${grep}')
 
 sh:
-	@make docker-exec cmd="sh"
+	@make docker-exec cmd='sh'
+
+copy-vendor:
+	@make docker-compose cmd='cp board:/var/www/vendor ./services/board/vendor'
 
 #
 ## docker
