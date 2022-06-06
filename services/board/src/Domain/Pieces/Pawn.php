@@ -1,14 +1,12 @@
 <?php
 
-namespace CliChess\Board\Domain;
+namespace CliChess\Board\Domain\Pieces;
 
-final class Pawn
+use CliChess\Board\Domain\Square;
+
+final class Pawn implements Piece
 {
-    public function __construct(
-    ) {
-    }
-
-    public function can(Square $from, Square $to): bool
+    public function canMove(Square $from, Square $to): bool
     {
         $rowDiff = $to->rowDiff($from);
         $columnDiff = $to->columnDiff($from);

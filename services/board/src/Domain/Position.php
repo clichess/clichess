@@ -13,10 +13,10 @@ final class Position
 
     public function withMoveApplied(Move $move): self
     {
-        $pawn = $this->pieces[0];
+        $piece = $this->pieces[0];
 
-        $movedPawn = $pawn->movedTo($move->targetSquare());
+        $movedPiece = $piece->movedTo($move->targetSquare());
 
-        return new self($movedPawn);
+        return new self($movedPiece);
     }
 }
