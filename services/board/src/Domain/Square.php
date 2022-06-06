@@ -11,6 +11,7 @@ enum Square: string
     case e3 = 'e3';
     case e4 = 'e4';
     case e5 = 'e5';
+    case e6 = 'e6';
 
     public static function fromString(string $value): self
     {

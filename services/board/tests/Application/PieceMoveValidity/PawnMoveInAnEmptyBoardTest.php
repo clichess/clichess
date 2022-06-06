@@ -43,8 +43,50 @@ class PawnMoveInAnEmptyBoardTest extends TestCase
         ($this->handler)($command);
 
         self::assertDomainEvents(
-            new MoveApplied(Stubber::boardWith(id: 'board-id', moves: [$to], piecePosition: $from)),
+            new MoveApplied(Stubber::boardWith(id: 'board-id', moves: [$to], piecePosition: $to)),
         );
+    }
+
+    /**
+     * @test
+     */
+    public function moveAppliedMoreThanOnceForConsectiveLegalMoves(): void
+    {
+        $repo = new InMemoryBoardRepository(Stubber::boardWith(id: 'board-id', piecePosition: 'e2'));
+        $this->handler = new MakeMoveHandler($repo);
+        $command = new MakeMove('board-id', 'e4');
+        ($this->handler)($command);
+
+        self::assertDomainEvents(
+            new MoveApplied(Stubber::boardWith(id: 'board-id', moves: ['e4'], piecePosition: 'e4')),
+        );
+
+        $command = new MakeMove('board-id', 'e5');
+        ($this->handler)($command);
+
+        self::assertDomainEvents(
+            new MoveApplied(Stubber::boardWith(id: 'board-id', moves: ['e4', 'e5'], piecePosition: 'e5')),
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function moveAppliedMoreThanOnceForConsectiveLegalAndIllegalMoves(): void
+    {
+        $repo = new InMemoryBoardRepository(Stubber::boardWith(id: 'board-id', piecePosition: 'e2'));
+        $this->handler = new MakeMoveHandler($repo);
+        $command = new MakeMove('board-id', 'e4');
+        ($this->handler)($command);
+
+        self::assertDomainEvents(
+            new MoveApplied(Stubber::boardWith(id: 'board-id', moves: ['e4'], piecePosition: 'e4')),
+        );
+
+        $command = new MakeMove('board-id', 'e6');
+        ($this->handler)($command);
+
+        self::expectException(IllegalMove::class);
     }
 
     /**

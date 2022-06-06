@@ -9,7 +9,7 @@ final class Board
 
     public function __construct(
         public readonly BoardId $id,
-        public readonly Pawn $piece,
+        public Pawn $piece,
         Move ...$moves,
     ) {
         $this->moves = $moves;
@@ -22,6 +22,7 @@ final class Board
         }
 
         $this->moves[] = $move;
+        $this->piece = $this->piece->positionedAt($move->targetSquare());
 
         Events::collect(new MoveApplied($this));
     }
