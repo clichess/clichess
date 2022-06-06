@@ -22,8 +22,8 @@ class PawnMoveInAnEmptyBoardTest extends TestCase
     public function setUp(): void
     {
         $repo = new InMemoryBoardRepository(
-            Stubber::boardWith(id: 'board-e2', initialPosition: new Position(new PositionedPiece(Square::e2, new Pawn()))),
-            Stubber::boardWith(id: 'board-d2', initialPosition: new Position(new PositionedPiece(Square::d2, new Pawn()))),
+            Stubber::boardWith(id: 'board-e2', initialPosition: new Position(new PositionedPiece(Square::fromString('e2'), new Pawn()))),
+            Stubber::boardWith(id: 'board-d2', initialPosition: new Position(new PositionedPiece(Square::fromString('d2'), new Pawn()))),
         );
 
         $this->handler = new MakeMoveHandler($repo);
@@ -71,7 +71,7 @@ class PawnMoveInAnEmptyBoardTest extends TestCase
             Stubber::boardWith(
                 id: 'board-e2',
                 initialPosition: new Position(
-                    new PositionedPiece(Square::e2, new Pawn()),
+                    new PositionedPiece(Square::fromString('e2'), new Pawn()),
                 ),
                 moves: ['e4', 'e5'],
             ),

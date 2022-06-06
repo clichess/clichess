@@ -2,21 +2,26 @@
 
 namespace CliChess\Board\Domain;
 
-enum Square: string
-{
-    case d2 = 'd2';
-    case d4 = 'd4';
-    case d5 = 'd5';
+use InvalidArgumentException;
 
-    case e2 = 'e2';
-    case e3 = 'e3';
-    case e4 = 'e4';
-    case e5 = 'e5';
-    case e6 = 'e6';
+final class Square
+{
+    private readonly string $value;
+
+    private function __construct(string $value) 
+    {
+        if (!in_array($value[0], range('a', 'h')) || !in_array($value[1], range(1, 8))) {
+            throw new InvalidArgumentException(
+                sprintf('Invalid square %s', $value)
+            );
+        }
+
+        $this->value = $value;
+    }
 
     public static function fromString(string $value): self
     {
-        return self::tryFrom($value);
+        return new self($value);
     }
 
     public function columnDiff(self $that): int
