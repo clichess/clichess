@@ -2,15 +2,15 @@
 
 namespace CliChess\Board\Application\PieceMoveValidity;
 
+use CliChess\Board\Application\ApplicationTestCase;
 use CliChess\Board\Application\InMemoryBoardRepository;
 use CliChess\Board\Application\Move\MakeMove;
 use CliChess\Board\Application\Move\MakeMoveHandler;
-use CliChess\Board\Domain\MutatedAggregate;
 use CliChess\Board\Domain\Position\IllegalMove;
 use CliChess\Board\Stubber;
 use PHPUnit\Framework\TestCase;
 
-class PawnMoveInAnEmptyBoardTest extends TestCase
+class PawnMoveInAnEmptyBoardTest extends ApplicationTestCase
 {
     private MakeMoveHandler $handler;
 
@@ -43,7 +43,7 @@ class PawnMoveInAnEmptyBoardTest extends TestCase
 
         ($this->handler)(new MakeMove($boardId, $to));
 
-        self::assertMutatedAggregate($expected);
+        $this->assertMutatedAggregate($expected);
     }
 
     /**
@@ -57,7 +57,7 @@ class PawnMoveInAnEmptyBoardTest extends TestCase
         ($this->handler)(new MakeMove('board-e2', 'e5'));
         ($this->handler)(new MakeMove('board-e2', 'e6'));
 
-        self::assertMutatedAggregate($expected);
+        $this->assertMutatedAggregate($expected);
     }
 
     public function boardIdsWithIllegalMoves(): array
@@ -80,10 +80,5 @@ class PawnMoveInAnEmptyBoardTest extends TestCase
         self::expectException(IllegalMove::class);
 
         ($this->handler)($command);
-    }
-
-    private static function assertMutatedAggregate(object $expected): void
-    {
-        self::assertEquals($expected, MutatedAggregate::pop());
     }
 }
