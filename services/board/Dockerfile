@@ -11,9 +11,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 
 USER www-data
 
-#COPY --chown=www-data ./composer* ./symfony.lock ./
-#RUN composer install $COMPOSER_INSTALL_OPTIONS
-#
-#COPY --chown=www-data ./ ./
-#RUN composer dump-autoload && \
-#    ENV_NAME=build NODE_NAME=localhost console cache:warmup
+COPY --chown=www-data ./composer* ./
+RUN composer install
+
+COPY --chown=www-data ./ ./
+RUN composer dump-autoload

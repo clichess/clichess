@@ -7,4 +7,7 @@ services:
     build:
       context: ./services/board/
     volumes:
-      - ./services/board:/var/www
+      - ./services/board/src:/var/www/src
+      - ./services/board/tests:/var/www/tests
+      - ./services/board/composer.json:/var/www/composer.json
+      - ./services/board/composer.lock:/var/www/composer.lock

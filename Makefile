@@ -9,6 +9,9 @@ up:
 down:
 	@make docker-compose cmd='down -v --remove-orphans'
 
+test:
+	@make docker-compose cmd='run --rm board ./vendor/bin/phpunit -c tests/phpunit.xml --testdox '
+
 #
 # Dev
 status:
@@ -18,7 +21,10 @@ logs:
 	@make docker-compose cmd='logs -f' $(if ${grep},| grep '${grep}')
 
 sh:
-	@make docker-exec cmd="sh"
+	@make docker-exec cmd='sh'
+
+copy-vendor:
+	@make docker-compose cmd='cp board:/var/www/vendor ./services/board/vendor'
 
 #
 ## docker
