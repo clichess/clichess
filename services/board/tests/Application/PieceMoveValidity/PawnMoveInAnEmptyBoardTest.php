@@ -8,7 +8,6 @@ use CliChess\Board\Application\Move\MakeMove;
 use CliChess\Board\Application\Move\MakeMoveHandler;
 use CliChess\Board\Domain\Position\IllegalMove;
 use CliChess\Board\Stubber;
-use PHPUnit\Framework\TestCase;
 
 class PawnMoveInAnEmptyBoardTest extends ApplicationTestCase
 {

@@ -3,6 +3,7 @@
 namespace CliChess\Board\Domain\Position;
 
 use CliChess\Board\Domain\Move;
+use CliChess\Board\Domain\Pieces\Bishop;
 use CliChess\Board\Domain\Pieces\Knight;
 use CliChess\Board\Domain\Pieces\Pawn;
 use CliChess\Board\Domain\Square;
@@ -23,6 +24,7 @@ final class Position
             $positionedPieces[] = new PositionedPiece(
                 Square::fromString($square),
                 match ($piece) {
+                    'B' => new Bishop(),
                     'N' => new Knight(),
                     'P' => new Pawn(),
                 },
