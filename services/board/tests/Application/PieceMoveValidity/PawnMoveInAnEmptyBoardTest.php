@@ -1,16 +1,12 @@
 <?php
 
-namespace CliChess\Board\PieceMoveValidity;
+namespace CliChess\Board\Application\PieceMoveValidity;
 
 use CliChess\Board\Application\InMemoryBoardRepository;
 use CliChess\Board\Application\Move\MakeMove;
 use CliChess\Board\Application\Move\MakeMoveHandler;
-use CliChess\Board\Domain\IllegalMove;
 use CliChess\Board\Domain\MutatedAggregate;
-use CliChess\Board\Domain\Pieces\Pawn;
-use CliChess\Board\Domain\Position;
-use CliChess\Board\Domain\PositionedPiece;
-use CliChess\Board\Domain\Square;
+use CliChess\Board\Domain\Position\IllegalMove;
 use CliChess\Board\Stubber;
 use PHPUnit\Framework\TestCase;
 
@@ -21,8 +17,8 @@ class PawnMoveInAnEmptyBoardTest extends TestCase
     public function setUp(): void
     {
         $repo = new InMemoryBoardRepository(
-            Stubber::boardWith(id: 'board-e2', initialPosition: new Position(new PositionedPiece(Square::fromString('e2'), new Pawn()))),
-            Stubber::boardWith(id: 'board-d2', initialPosition: new Position(new PositionedPiece(Square::fromString('d2'), new Pawn()))),
+            Stubber::boardWith(id: 'board-e2', initialPosition: ['e2' => 'P']),
+            Stubber::boardWith(id: 'board-d2', initialPosition: ['d2' => 'P']),
         );
 
         $this->handler = new MakeMoveHandler($repo);
@@ -41,40 +37,27 @@ class PawnMoveInAnEmptyBoardTest extends TestCase
      * @test
      * @dataProvider boardIdsWithLegalMoves
      */
-    public function moveAppliedIsCollectedIfMoveCanBeMade(string $boardId, string $from, string $to): void
+    public function boardIsCorrectlyMutatedIfMoveIsLegal(string $boardId, string $from, string $to): void
     {
-        $command = new MakeMove($boardId, $to);
+        $expected = Stubber::boardWith(id: $boardId, initialPosition: [$from => 'P'], moves: [$to]);
 
-        ($this->handler)($command);
+        ($this->handler)(new MakeMove($boardId, $to));
 
-        self::assertMutatedAggregate(
-            Stubber::boardWith(
-                id: $boardId,
-                initialPosition: new Position(new PositionedPiece(Square::fromString($from), new Pawn())),
-                moves: [$to],
-            ),
-        );
-
+        self::assertMutatedAggregate($expected);
     }
 
     /**
      * @test
      */
-    public function moveAppliedMoreThanOnceForConsecutiveLegalMoves(): void
+    public function boardIsCorrectlyMutatedIfAllConsecutiveMovesAreLegal(): void
     {
+        $expected = Stubber::boardWith(id: 'board-e2', initialPosition: ['e2' => 'P'], moves: ['e4', 'e5', 'e6']);
+
         ($this->handler)(new MakeMove('board-e2', 'e4'));
-
         ($this->handler)(new MakeMove('board-e2', 'e5'));
+        ($this->handler)(new MakeMove('board-e2', 'e6'));
 
-        self::assertMutatedAggregate(
-            Stubber::boardWith(
-                id: 'board-e2',
-                initialPosition: new Position(
-                    new PositionedPiece(Square::fromString('e2'), new Pawn()),
-                ),
-                moves: ['e4', 'e5'],
-            ),
-        );
+        self::assertMutatedAggregate($expected);
     }
 
     public function boardIdsWithIllegalMoves(): array
