@@ -2,8 +2,8 @@
 
 namespace CliChess\Board\Application\Move;
 
+use CliChess\Board\Application\BoardRepository;
 use CliChess\Board\Domain\BoardId;
-use CliChess\Board\Domain\BoardRepository;
 use CliChess\Board\Domain\Move;
 
 final class MakeMoveHandler
@@ -19,6 +19,7 @@ final class MakeMoveHandler
         $move = new Move($makeMove->move);
 
         $board = $this->boardRepo->findById($boardId) ?? throw new BoardNotFound();
+
         $board->apply($move);
     }
 }

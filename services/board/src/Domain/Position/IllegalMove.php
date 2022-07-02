@@ -1,6 +1,6 @@
 <?php
 
-namespace CliChess\Board\Domain;
+namespace CliChess\Board\Domain\Position;
 
 use DomainException;
 

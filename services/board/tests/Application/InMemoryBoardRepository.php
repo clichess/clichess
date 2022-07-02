@@ -4,7 +4,6 @@ namespace CliChess\Board\Application;
 
 use CliChess\Board\Domain\Board;
 use CliChess\Board\Domain\BoardId;
-use CliChess\Board\Domain\BoardRepository;
 
 class InMemoryBoardRepository implements BoardRepository
 {

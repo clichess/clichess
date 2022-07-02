@@ -2,37 +2,32 @@
 
 namespace CliChess\Board\Domain;
 
+use CliChess\Board\Domain\Position\Position;
+
 final class Board
 {
     /** @var Move[] */
-    private array $moves;
+    private array $moves = [];
 
-    public function __construct(
+    private function __construct(
         public readonly BoardId $id,
         public readonly Position $initialPosition,
-        Move ...$moves,
     ) {
-        $this->moves = $moves;
     }
 
     public function apply(Move $move): void
     {
-        $position = $this->replayMoves();
-        $position->withMoveApplied($move);
+        $this
+            ->currentPosition()
+            ->withMoveApplied($move);
 
         $this->moves[] = $move;
 
         MutatedAggregate::add($this);
     }
 
-    private function replayMoves(): Position
+    private function currentPosition(): Position
     {
-        $position = $this->initialPosition;
-
-        foreach ($this->moves as $move) {
-            $position = $position->withMoveApplied($move);
-        }
-
-        return $position;
+        return $this->initialPosition->withMovesApplied(...$this->moves);
     }
 }

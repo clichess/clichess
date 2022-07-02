@@ -9,8 +9,9 @@ up:
 down:
 	@make docker-compose cmd='down -v --remove-orphans'
 
+test: options = $(if ${filter},--filter=${filter})
 test:
-	@make docker-compose cmd='run --rm board ./vendor/bin/phpunit -c tests/phpunit.xml --testdox '
+	@make docker-run service=board cmd='./vendor/bin/phpunit -c tests/phpunit.xml --testdox ${options}'
 
 #
 # Dev
@@ -31,6 +32,10 @@ copy-vendor:
 docker-exec: options = $(if ${user},-u${user})
 docker-exec:
 	@make docker-compose cmd="exec ${options} ${service} ${cmd}"
+
+docker-run: options = $(if ${user},-u${user})
+docker-run:
+	@make docker-compose cmd="run ${options} ${service} ${cmd}"
 
 docker-compose:
 	docker compose -f docker-compose.yaml ${cmd}

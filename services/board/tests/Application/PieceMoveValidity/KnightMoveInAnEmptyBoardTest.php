@@ -1,32 +1,24 @@
 <?php
 
-namespace CliChess\Board\PieceMoveValidity;
+namespace CliChess\Board\Application\PieceMoveValidity;
 
+use CliChess\Board\Application\ApplicationTestCase;
 use CliChess\Board\Application\InMemoryBoardRepository;
 use CliChess\Board\Application\Move\MakeMove;
 use CliChess\Board\Application\Move\MakeMoveHandler;
-use CliChess\Board\Domain\IllegalMove;
-use CliChess\Board\Domain\MutatedAggregate;
-use CliChess\Board\Domain\Pieces\Knight;
-use CliChess\Board\Domain\Pieces\Pawn;
-use CliChess\Board\Domain\Position;
-use CliChess\Board\Domain\PositionedPiece;
-use CliChess\Board\Domain\Square;
+use CliChess\Board\Domain\Position\IllegalMove;
 use CliChess\Board\Stubber;
-use PHPUnit\Framework\TestCase;
 
-class KnightMoveInAnEmptyBoardTest extends TestCase
+class KnightMoveInAnEmptyBoardTest extends ApplicationTestCase
 {
-    private MakeMoveHandler $handler;
-
     public function setUp(): void
     {
         $repo = new InMemoryBoardRepository(
-            Stubber::boardWith(id: 'board-e3', initialPosition: new Position(new PositionedPiece(Square::fromString('e3'), new Knight()))),
-            Stubber::boardWith(id: 'board-c6', initialPosition: new Position(new PositionedPiece(Square::fromString('c6'), new Knight()))),
+            Stubber::boardWith(id: 'board-e3', initialPosition: ['e3' => 'N']),
+            Stubber::boardWith(id: 'board-c6', initialPosition: ['c6' => 'N']),
         );
 
-        $this->handler = new MakeMoveHandler($repo);
+        $this->setUpHandler(new MakeMoveHandler($repo));
     }
 
     public function boardIdsWithLegalMoves(): array
@@ -56,41 +48,28 @@ class KnightMoveInAnEmptyBoardTest extends TestCase
      * @test
      * @dataProvider boardIdsWithLegalMoves
      */
-    public function moveAppliedIsCollectedIfMoveCanBeMade(string $boardId, string $from, string $to): void
+    public function boardIsCorrectlyMutatedIfMoveIsLegal(string $boardId, string $from, string $to): void
     {
-        $command = new MakeMove($boardId, $to);
+        $expected = Stubber::boardWith(id: $boardId, initialPosition: [$from => 'N'], moves: [$to]);
 
-        ($this->handler)($command);
+        $this->callHandler(new MakeMove($boardId, $to));
 
-        self::assertMutatedAggregate(
-            Stubber::boardWith(
-                id: $boardId,
-                initialPosition: new Position(new PositionedPiece(Square::fromString($from), new Knight())),
-                moves: [$to],
-            ),
-        );
-
+        $this->assertMutatedAggregate($expected);
     }
 
     /**
      * @test
      */
-    public function moveAppliedMoreThanOnceForConsecutiveLegalMoves(): void
+    public function boardIsCorrectlyMutatedIfAllConsecutiveMovesAreLegal(): void
     {
-        ($this->handler)(new MakeMove('board-e3', 'g4'));
-        ($this->handler)(new MakeMove('board-e3', 'h6'));
-        ($this->handler)(new MakeMove('board-e3', 'f7'));
-        ($this->handler)(new MakeMove('board-e3', 'd8'));
+        $expected = Stubber::boardWith(id: 'board-e3', initialPosition: ['e3' => 'N'], moves: ['g4', 'h6', 'f7', 'd8']);
 
-        self::assertMutatedAggregate(
-            Stubber::boardWith(
-                id: 'board-e3',
-                initialPosition: new Position(
-                    new PositionedPiece(Square::fromString('e3'), new Knight()),
-                ),
-                moves: ['g4', 'h6', 'f7', 'd8'],
-            ),
-        );
+        $this->callHandler(new MakeMove('board-e3', 'g4'));
+        $this->callHandler(new MakeMove('board-e3', 'h6'));
+        $this->callHandler(new MakeMove('board-e3', 'f7'));
+        $this->callHandler(new MakeMove('board-e3', 'd8'));
+
+        $this->assertMutatedAggregate($expected);
     }
 
     public function boardIdsWithIllegalMoves(): array
@@ -116,15 +95,8 @@ class KnightMoveInAnEmptyBoardTest extends TestCase
      */
     public function throwExceptionIfMoveIsIllegal(string $boardId, string $to): void
     {
-        $command = new MakeMove($boardId, $to);
+        $this->expectException(IllegalMove::class);
 
-        self::expectException(IllegalMove::class);
-
-        ($this->handler)($command);
-    }
-
-    private static function assertMutatedAggregate(object $expected): void
-    {
-        self::assertEquals($expected, MutatedAggregate::pop());
+        $this->callHandler(new MakeMove($boardId, $to));
     }
 }
