@@ -6,6 +6,7 @@ use CliChess\Board\Domain\Move;
 use CliChess\Board\Domain\Pieces\Bishop;
 use CliChess\Board\Domain\Pieces\Knight;
 use CliChess\Board\Domain\Pieces\Pawn;
+use CliChess\Board\Domain\Pieces\Rook;
 use CliChess\Board\Domain\Square;
 
 final class Position
@@ -27,6 +28,7 @@ final class Position
                     'B' => new Bishop(),
                     'N' => new Knight(),
                     'P' => new Pawn(),
+                    'R' => new Rook(),
                 },
             );
         }
