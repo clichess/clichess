@@ -11,8 +11,6 @@ use CliChess\Board\Stubber;
 
 class PawnMoveInAnEmptyBoardTest extends ApplicationTestCase
 {
-    private MakeMoveHandler $handler;
-
     public function setUp(): void
     {
         $repo = new InMemoryBoardRepository(
@@ -20,7 +18,7 @@ class PawnMoveInAnEmptyBoardTest extends ApplicationTestCase
             Stubber::boardWith(id: 'board-d2', initialPosition: ['d2' => 'P']),
         );
 
-        $this->handler = new MakeMoveHandler($repo);
+        $this->setUpHandler(new MakeMoveHandler($repo));
     }
 
     public function boardIdsWithLegalMoves(): array
@@ -40,7 +38,7 @@ class PawnMoveInAnEmptyBoardTest extends ApplicationTestCase
     {
         $expected = Stubber::boardWith(id: $boardId, initialPosition: [$from => 'P'], moves: [$to]);
 
-        ($this->handler)(new MakeMove($boardId, $to));
+        $this->callHandler(new MakeMove($boardId, $to));
 
         $this->assertMutatedAggregate($expected);
     }
@@ -52,9 +50,9 @@ class PawnMoveInAnEmptyBoardTest extends ApplicationTestCase
     {
         $expected = Stubber::boardWith(id: 'board-e2', initialPosition: ['e2' => 'P'], moves: ['e4', 'e5', 'e6']);
 
-        ($this->handler)(new MakeMove('board-e2', 'e4'));
-        ($this->handler)(new MakeMove('board-e2', 'e5'));
-        ($this->handler)(new MakeMove('board-e2', 'e6'));
+        $this->callHandler(new MakeMove('board-e2', 'e4'));
+        $this->callHandler(new MakeMove('board-e2', 'e5'));
+        $this->callHandler(new MakeMove('board-e2', 'e6'));
 
         $this->assertMutatedAggregate($expected);
     }
@@ -74,10 +72,8 @@ class PawnMoveInAnEmptyBoardTest extends ApplicationTestCase
      */
     public function throwExceptionIfMoveIsIllegal(string $boardId, string $to): void
     {
-        $command = new MakeMove($boardId, $to);
-
         self::expectException(IllegalMove::class);
 
-        ($this->handler)($command);
+        $this->callHandler(new MakeMove($boardId, $to));
     }
 }
