@@ -8,6 +8,7 @@ use CliChess\Board\Domain\Pieces\King;
 use CliChess\Board\Domain\Pieces\Knight;
 use CliChess\Board\Domain\Pieces\Pawn;
 use CliChess\Board\Domain\Pieces\Rook;
+use CliChess\Board\Domain\Pieces\Queen;
 use CliChess\Board\Domain\Square;
 
 final class Position
@@ -31,6 +32,7 @@ final class Position
                     'N' => new Knight(),
                     'P' => new Pawn(),
                     'R' => new Rook(),
+                    'Q' => new Queen(),
                 },
             );
         }
