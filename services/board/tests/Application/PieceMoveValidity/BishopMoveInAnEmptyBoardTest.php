@@ -28,8 +28,8 @@ class BishopMoveInAnEmptyBoardTest extends ApplicationTestCase
             'from d4 to a1' => ['board-d4', 'd4', 'a1'],
             'from d4 to a7' => ['board-d4', 'd4', 'a7'],
             'from d4 to g1' => ['board-d4', 'd4', 'g1'],
-            'from d4 to f3' => ['board-d4', 'd4', 'f2'],
-            'from d4 to f5' => ['board-d4', 'd4', 'f2'],
+            'from d4 to f2' => ['board-d4', 'd4', 'f2'],
+            'from d4 to f6' => ['board-d4', 'd4', 'f6'],
             'from d4 to h8' => ['board-d4', 'd4', 'h8'],
         ];
     }
