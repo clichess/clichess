@@ -65,7 +65,7 @@ class BishopMoveInAnEmptyBoardTest extends ApplicationTestCase
     {
         return [
             'from e4 to e5' => ['board-e4', 'e5'],
-            'from d4 to d1' => ['board-d4', 'f1'],
+            'from d4 to f1' => ['board-d4', 'f1'],
             'from d4 to d5' => ['board-d4', 'd5'],
         ];
     }
