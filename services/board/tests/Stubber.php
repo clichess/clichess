@@ -17,7 +17,7 @@ final class Stubber
     ): Board {
         return self::hydrate(Board::class, [
             'id' => new BoardId($id ?? '666'),
-            'initialPosition' => Position::fromRawArray($initialPosition),
+            'initialPosition' => Position::fromArray($initialPosition),
             'moves' => array_map(fn (string $m): Move => new Move($m), $moves),
         ]);
     }
