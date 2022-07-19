@@ -11,7 +11,7 @@ down:
 
 test: options = $(if ${filter},--filter=${filter})
 test:
-	@make docker-run service=board cmd='./vendor/bin/phpunit -c tests/phpunit.xml --testdox ${options}'
+	@make docker-run service=board cmd='./vendor/bin/infection run -s -c tests/infection.json'
 
 #
 # Dev
