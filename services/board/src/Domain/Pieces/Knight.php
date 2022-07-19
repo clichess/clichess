@@ -2,15 +2,21 @@
 
 namespace CliChess\Board\Domain\Pieces;
 
+use CliChess\Board\Domain\MovingStrategies\LShape;
+use CliChess\Board\Domain\MovingStrategies\Moving;
 use CliChess\Board\Domain\Square;
 
 final class Knight implements Piece
 {
+    private Moving $strategy;
+
+    public function __construct()
+    {
+        $this->strategy = new LShape();
+    }
+
     public function canMove(Square $from, Square $to): bool
     {
-        $columnDiff = abs($from->columnDiff($to));
-        $rowDiff = abs($from->rowDiff($to));
-
-        return 2 === $columnDiff * $rowDiff;
+        return $this->strategy->canMove($from, $to);
     }
 }

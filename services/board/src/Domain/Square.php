@@ -34,6 +34,24 @@ final class Square
         return ord($this->row()) - ord($that->row());
     }
 
+    public function onSameRowAs(self $that): int
+    {
+        return 0 === $this->rowDiff($that);
+    }
+
+    public function onSameColumnAs(self $that): int
+    {
+        return 0 === $this->columnDiff($that);
+    }
+
+    public function inDiagonalWith(self $that): bool
+    {
+        $rowDiff = $this->rowDiff($that);
+        $columnDiff = $this->columnDiff($that);
+
+        return abs($rowDiff) === abs($columnDiff);
+    }
+
     private function column(): string
     {
         return $this->value[0];
