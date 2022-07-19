@@ -15,7 +15,7 @@ RUN curl -sSLf -o /usr/local/bin/install-php-extensions https://github.com/mloca
 USER www-data
 
 COPY --chown=www-data ./composer* ./
-RUN composer install
+RUN composer install --no-cache
 
 COPY --chown=www-data ./ ./
 RUN composer dump-autoload
