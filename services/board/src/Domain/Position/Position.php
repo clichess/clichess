@@ -3,12 +3,7 @@
 namespace CliChess\Board\Domain\Position;
 
 use CliChess\Board\Domain\Move;
-use CliChess\Board\Domain\Pieces\Bishop;
-use CliChess\Board\Domain\Pieces\King;
-use CliChess\Board\Domain\Pieces\Knight;
-use CliChess\Board\Domain\Pieces\Pawn;
-use CliChess\Board\Domain\Pieces\Rook;
-use CliChess\Board\Domain\Pieces\Queen;
+use CliChess\Board\Domain\Piece\Piece;
 use CliChess\Board\Domain\Square;
 
 final class Position
@@ -20,24 +15,15 @@ final class Position
         $this->pieces = $pieces;
     }
 
-    public static function fromRawArray(array $rawArray): self
+    public static function fromArray(array $arr): self
     {
-        $positionedPieces = [];
-        foreach ($rawArray as $square => $piece) {
-            $positionedPieces[] = new PositionedPiece(
-                Square::fromString($square),
-                match ($piece) {
-                    'B' => new Bishop(),
-                    'K' => new King(),
-                    'N' => new Knight(),
-                    'P' => new Pawn(),
-                    'R' => new Rook(),
-                    'Q' => new Queen(),
-                },
-            );
+        $pieces = [];
+
+        foreach ($arr as $square => $piece) {
+            $pieces[] = PositionedPiece::new(Piece::fromChar($piece), Square::fromString($square));
         }
 
-        return new self(...$positionedPieces);
+        return new self(...$pieces);
     }
 
     public function withMoveApplied(Move $move): self

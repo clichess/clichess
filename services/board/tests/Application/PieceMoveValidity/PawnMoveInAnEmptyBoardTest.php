@@ -76,4 +76,15 @@ class PawnMoveInAnEmptyBoardTest extends ApplicationTestCase
 
         $this->callHandler(new MakeMove($boardId, $to));
     }
+
+    /**
+     * @test
+     */
+    public function throwExceptionIfTryToMoveTwoSquaresForwardNotOnFirstMove(): void
+    {
+        $this->callHandler(new MakeMove('board-e2', 'e4'));
+        self::expectException(IllegalMove::class);
+
+        $this->callHandler(new MakeMove('board-e2', 'e6'));
+    }
 }
