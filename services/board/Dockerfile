@@ -2,7 +2,10 @@ FROM php:8.1-fpm-alpine
 
 WORKDIR /var/www
 
-RUN curl -sS https://getcomposer.org/installer | php -- \
+RUN curl -sSLf -o /usr/local/bin/install-php-extensions https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions && \
+    chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions pcov && \
+    curl -sS https://getcomposer.org/installer | php -- \
         --version=2.3.5 \
         --install-dir=/usr/local/bin \
         --filename=composer && \

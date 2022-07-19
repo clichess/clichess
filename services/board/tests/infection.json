@@ -1,0 +1,8 @@
+{
+    "$schema": "https://raw.githubusercontent.com/infection/infection/0.26.13/resources/schema.json",
+    "source": { "directories": [ "./src" ] },
+    "phpUnit": { "configDir": "./" },
+    "mutators": { "@default": true },
+    "minMsi": 100,
+    "minCoveredMsi": 100
+}
