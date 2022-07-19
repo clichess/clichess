@@ -14,6 +14,6 @@ class ConstrainedIfAlreadyMoved implements MovingStrategy
 
     public function allow(MovingPiece $movingPiece): bool
     {
-        return !$movingPiece->wasPieceAlreadyMoved() && $this->constrained->allow($movingPiece);
+        return $movingPiece->wasNotMovedYet() && $this->constrained->allow($movingPiece);
     }
 }

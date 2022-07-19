@@ -12,9 +12,9 @@ final class MovingPiece
     ) {
     }
 
-    public function wasPieceAlreadyMoved(): bool
+    public function wasNotMovedYet(): bool
     {
-        return $this->piece->alreadyMoved();
+        return !$this->piece->alreadyMoved();
     }
 
     public function rowDistance(): int
