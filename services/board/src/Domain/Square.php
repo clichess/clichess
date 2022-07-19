@@ -6,14 +6,15 @@ use InvalidArgumentException;
 
 final class Square
 {
+    private const LEGAL_ROWS = ['1', '2', '3', '4', '5', '6', '7', '8'];
+    private const LEGAL_COLUMNS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
     private readonly string $value;
 
     private function __construct(string $value) 
     {
-        if (!in_array($value[0], range('a', 'h')) || !in_array($value[1], range(1, 8))) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid square %s', $value)
-            );
+        if (2 !== strlen($value) || !in_array($value[0], self::LEGAL_COLUMNS) || !in_array($value[1], self::LEGAL_ROWS)) {
+            throw new InvalidArgumentException("Invalid square $value");
         }
 
         $this->value = $value;

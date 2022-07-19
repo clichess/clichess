@@ -6,13 +6,12 @@ use CliChess\Board\Domain\Position\Position;
 
 final class Board
 {
-    /** @var Move[] */
-    private array $moves = [];
+    public readonly BoardId $id;
+    public readonly Position $initialPosition;
+    /** @var Move[] */ private array $moves = [];
 
-    private function __construct(
-        public readonly BoardId $id,
-        public readonly Position $initialPosition,
-    ) {
+    private function __construct()
+    {
     }
 
     public function apply(Move $move): void
