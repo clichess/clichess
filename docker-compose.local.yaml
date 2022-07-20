@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  board:
+    command: 'tail -f /dev/null'
+    volumes:
+    - ./services/board/config:/var/www/code/config
+    - ./services/board/src:/var/www/code/src
+    - ./services/board/tests:/var/www/code/tests
+    - ./services/board/composer.json:/var/www/code/composer.json
+    - ./services/board/composer.lock:/var/www/code/composer.lock
+    - ./services/board/Makefile:/var/www/code/Makefile
+
+    - ./dev/cache/board:/var/www/cache/tests
+    - ./dev/reports/board:/var/www/reports

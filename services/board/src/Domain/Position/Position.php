@@ -43,7 +43,7 @@ final class Position
     public function withMoveApplied(Move $move): self
     {
         $piece = $this->pieces[0];
-        $movedPiece = $piece->movedTo($move->targetSquare());
+        $movedPiece = $piece->movedTo($move->targetSquare);
 
         return new self($movedPiece);
     }

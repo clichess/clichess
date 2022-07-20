@@ -1,0 +1,13 @@
+deptrac:
+  paths:
+  - ./../src
+
+  layers:
+  - name: Application
+    collectors: [ { type: className, regex: ^CliChess\\Board\\Application\\.* } ]
+  - name: Domain
+    collectors: [ { type: className, regex: ^CliChess\\Board\\Domain\\.* } ]
+
+  ruleset:
+    Application: [ Application, Domain ]
+    Domain: [ Domain ]

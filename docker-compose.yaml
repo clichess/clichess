@@ -3,11 +3,5 @@ version: '3.9'
 services:
   board:
     image: clichess/board
-    command: 'tail -f /dev/null'
     build:
       context: ./services/board/
-    volumes:
-      - ./services/board/src:/var/www/src
-      - ./services/board/tests:/var/www/tests
-      - ./services/board/composer.json:/var/www/composer.json
-      - ./services/board/composer.lock:/var/www/composer.lock
