@@ -9,9 +9,9 @@ up:
 down:
 	@make docker-compose cmd='down -v --remove-orphans'
 
-test: options = $(if ${filter},--filter=${filter})
+test: level ?= pipeline
 test:
-	@make docker-run service=board cmd='./vendor/bin/infection run -s -c tests/infection.json'
+	@make docker-run service=board cmd='make test-${level}'
 
 #
 # Dev
@@ -25,7 +25,7 @@ sh:
 	@make docker-exec cmd='sh'
 
 copy-vendor:
-	@make docker-compose cmd='cp board:/var/www/vendor ./services/board/vendor'
+	@make docker-compose cmd='cp board:/var/www/vendor ./dev/vendors/board'
 
 #
 ## docker
@@ -33,9 +33,9 @@ docker-exec: options = $(if ${user},-u${user})
 docker-exec:
 	@make docker-compose cmd="exec ${options} ${service} ${cmd}"
 
-docker-run: options = $(if ${user},-u${user})
 docker-run:
-	@make docker-compose cmd="run ${options} ${service} ${cmd}"
+	@make docker-compose cmd="run --rm ${service} ${cmd}"
 
+docker-compose: composeFiles = -f docker-compose.yaml $(if ${CI},,-f docker-compose.local.yaml)
 docker-compose:
-	docker compose -f docker-compose.yaml ${cmd}
+	docker compose ${composeFiles} ${cmd}
