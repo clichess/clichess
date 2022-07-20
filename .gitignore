@@ -1,3 +1,9 @@
 .idea/
 .vscode/
-services/board/vendor/
+
+dev/cache/*
+!dev/cache/.gitkeep
+dev/reports/*
+!dev/reports/.gitkeep
+dev/vendors/*
+!dev/vendors/.gitkeep
